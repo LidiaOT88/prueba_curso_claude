@@ -201,6 +201,21 @@ const seed = async () => {
 
         console.log('Sample orders created')
 
+        const seedTables = [
+            { id: 'table-r1-1', restaurantId: 'rest-1', number: 1, description: 'Ventana', capacity: 2 },
+            { id: 'table-r1-2', restaurantId: 'rest-1', number: 2, description: 'Centro', capacity: 4 },
+            { id: 'table-r1-3', restaurantId: 'rest-1', number: 3, description: 'Terraza', capacity: 6 },
+            { id: 'table-r2-1', restaurantId: 'rest-2', number: 1, description: 'Barra', capacity: 2 },
+            { id: 'table-r2-2', restaurantId: 'rest-2', number: 2, description: 'Salón', capacity: 4 },
+        ]
+        for (const t of seedTables) {
+            await dbConfig.run(`
+                INSERT OR IGNORE INTO tables (id, restaurant_id, number, description, capacity, status, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, 'libre', ?, ?)
+            `, [t.id, t.restaurantId, t.number, t.description, t.capacity, new Date().toISOString(), new Date().toISOString()])
+        }
+        console.log(`Tables ensured: ${seedTables.length}`)
+
         console.log('\n=== Seed completado ===')
         console.log('\nEmpleados:')
         console.log('  Admin: admin@resttek.com / admin@resttek.com')

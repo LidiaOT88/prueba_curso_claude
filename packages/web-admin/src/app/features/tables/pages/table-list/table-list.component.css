@@ -1,0 +1,16 @@
+.number {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.status-libre {
+  color: var(--green-light);
+}
+
+.status-ocupada {
+  color: #e57373;
+}
+
+.status-reservada {
+  color: #ffb74d;
+}

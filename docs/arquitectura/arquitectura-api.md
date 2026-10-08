@@ -310,6 +310,20 @@ Todos cuelgan de `/api/v1`. La columna **Roles** indica qué valores de `req.use
 
 Los ingredientes son **más restrictivos** que los platos: solo `admin` puede crear, editar o borrar.
 
+### Mesas
+
+| Método | Ruta | Roles |
+| --- | --- | --- |
+| `POST` | `/api/v1/restaurants/:restaurantId/tables` | admin |
+| `GET` | `/api/v1/restaurants/:restaurantId/tables` | autenticado |
+| `PUT` | `/api/v1/restaurants/:restaurantId/tables/:id` | admin |
+| `DELETE` | `/api/v1/restaurants/:restaurantId/tables/:id` | admin — 400 si la mesa está `ocupada` |
+| `PATCH` | `/api/v1/restaurants/:restaurantId/tables/:id/status` | admin, manager, camarero, cocinero |
+| `POST` | `/api/v1/restaurants/:restaurantId/tables/:id/occupy` | autenticado — 409 si la mesa ya no está `libre` |
+| `GET` | `/api/v1/public/restaurants/:restaurantId/tables/available?people=N` | público — mesas `libre` con `capacity >= N`, de menor a mayor capacidad |
+
+Ocupar una mesa es atómico (`UPDATE ... WHERE status = 'libre'`), así que dos clientes no pueden coger la misma. Liberarla es manual: un empleado cambia el estado a `libre`.
+
 ### Pedidos
 
 | Método | Ruta | Roles |

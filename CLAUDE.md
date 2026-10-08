@@ -17,7 +17,7 @@ npm test               # solo tests de la API (vitest run)
 ```
 
 - Test único / watch (desde `packages/api`): `npx vitest run src/ruta/Fichero.test.ts`, `npx vitest run -t "nombre del test"`, `npm run test:watch`.
-- Los frontends no tienen script de test ni lint; el build es `npm run build -w @resttek/web-<nombre>`.
+- Los frontends tienen tests con Vitest vía `ng test` (`npm test -w @resttek/web-<nombre>`); no hay lint. El build es `npm run build -w @resttek/web-<nombre>`.
 - Credenciales de seed: la contraseña de cada usuario es su propio email (ej. `admin@resttek.com`).
 
 ## Arquitectura

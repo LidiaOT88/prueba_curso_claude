@@ -130,6 +130,24 @@ Almacena **todos** los usuarios del sistema, incluidos los clientes: no hay tabl
 
 ---
 
+### `tables`
+
+Mesas de cada restaurante.
+
+| Columna | Tipo | Nulo | Descripción |
+| --- | --- | --- | --- |
+| `id` | TEXT | No | PK |
+| `restaurant_id` | TEXT | No | FK → `restaurants.id` |
+| `number` | INTEGER | No | Número de mesa, único por restaurante |
+| `description` | TEXT | No | Descripción (por defecto vacía) |
+| `capacity` | INTEGER | No | Comensales, entero ≥ 1 |
+| `status` | TEXT | No | `libre`, `ocupada` o `reservada` (por defecto `libre`) |
+| `created_at` / `updated_at` | TEXT | No | ISO 8601 |
+
+**Restricciones:** `UNIQUE(restaurant_id, number)`. `orders.table_id` guarda el id de la mesa, sin FK.
+
+---
+
 ### `ingredients`
 
 Ingredientes disponibles en cada restaurante.

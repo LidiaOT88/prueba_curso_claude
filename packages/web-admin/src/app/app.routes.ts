@@ -33,6 +33,10 @@ export const routes: Routes = [
             loadChildren: () => import('./features/dishes/dishes.routes').then(m => m.DISH_ROUTES)
           },
           {
+            path: 'tables',
+            loadChildren: () => import('./features/tables/tables.routes').then(m => m.TABLE_ROUTES)
+          },
+          {
             path: 'ingredients',
             loadChildren: () => import('./features/ingredients/ingredients.routes').then(m => m.INGREDIENT_ROUTES)
           },
