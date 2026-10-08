@@ -1,18 +1,25 @@
 ---
 name: new-feature
-description: Crea una rama de trabajo a partir de development (o master si no existe), redacta un plan por tareas pequeñas en docs/plans y lo implementa con TDD estricto. Úsala cuando se pida una nueva funcionalidad, corrección o refactor.
+description: Recibe el número de una issue, la lee con GitHub CLI (gh), crea una rama de trabajo a partir de development (o master si no existe), publica un plan por tareas pequeñas como comentario de esa issue y lo implementa con TDD estricto. Úsala cuando se pida planificar o implementar una issue.
 ---
 
 # new-feature
 
-Tarea a resolver: $ARGUMENTS
+Número de la issue a planificar: $ARGUMENTS
 
-Si `$ARGUMENTS` está vacío o es ambiguo, pregunta al usuario qué quiere hacer antes de continuar.
+`$ARGUMENTS` debe ser el número de una issue del repositorio (admite `123` o `#123`). Si está vacío o no es un número, pregunta al usuario qué issue quiere planificar antes de continuar.
+
+## 0. Leer la issue
+
+1. Comprueba que `gh` está instalado y autenticado (`gh auth status`). Si no lo está, avisa al usuario y para.
+2. Lee la issue completa, con comentarios: `gh issue view <numero> --comments`. Para datos estructurados usa `gh issue view <numero> --json number,title,body,labels,author,state,comments,url`.
+3. Si la issue no existe o está cerrada, avisa al usuario antes de seguir.
+4. Los comentarios pueden cambiar el planteamiento inicial: tenlos en cuenta.
 
 ## 1. Crear la rama
 
-1. Deduce el `<tipo>` de la tarea: `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, etc. (mismos tipos que Conventional Commits).
-2. Deduce una `<descripcion>` corta en kebab-case (por ejemplo `anadir-filtro-por-canal`), sin tildes ni espacios.
+1. Deduce el `<tipo>` de la tarea a partir de la issue (título, cuerpo y etiquetas): `feat`, `fix`, `refactor`, `docs`, `chore`, `test`, etc. (mismos tipos que Conventional Commits).
+2. Deduce una `<descripcion>` corta en kebab-case a partir del título de la issue (por ejemplo `anadir-filtro-por-canal`), sin tildes ni espacios.
 3. El nombre de la rama es `<tipo>/<descripcion>`.
 4. Elige la rama base:
    - Si existe `development` (`git rev-parse --verify --quiet development`, o `origin/development`), úsala como base.
@@ -23,7 +30,15 @@ Si `$ARGUMENTS` está vacío o es ambiguo, pregunta al usuario qué quiere hacer
 
 ## 2. Crear el plan
 
-Guarda el plan en `docs/plans/<tipo>-<descripcion>.md` (crea la carpeta si no existe). El plan se escribe en español y tiene esta estructura definida en `assets/TEMPLATE.md`.
+El plan se escribe en español, con la estructura definida en `assets/TEMPLATE.md`, rellenando la cabecera con los datos reales de la issue (número, enlace, autor, etiquetas). **No se guarda como fichero**: se publica como comentario de la issue.
+
+Para publicarlo, escribe el plan en un fichero temporal fuera del repositorio y ejecuta:
+
+```bash
+gh issue comment <numero> --body-file <fichero-temporal>
+```
+
+Usa `--body-file` (no `--body`) para conservar el formato Markdown. Después comprueba que se publicó y muestra al usuario la URL del comentario que devuelve `gh`.
 
 Reglas para las tareas:
 
@@ -33,7 +48,7 @@ Reglas para las tareas:
 - Respeta la arquitectura del proyecto (`routes` → `controllers` → `services` → `repositories` → `db.js`) y las convenciones de `CLAUDE.md`.
 - Antes de escribir el plan, explora el código relevante para que las tareas sean realistas.
 
-Muestra el plan al usuario y espera su confirmación antes de implementar.
+Muestra el plan al usuario junto con el enlace al comentario y espera su confirmación antes de implementar. Si el usuario pide cambios, actualiza el comentario con `gh issue comment <numero> --edit-last --body-file <fichero-temporal>` en lugar de publicar uno nuevo.
 
 ## 3. Implementar con TDD estricto
 
@@ -43,7 +58,7 @@ Para **cada** tarea, en orden, sigue el ciclo completo sin saltarte ningún paso
 2. **Green**: escribe el mínimo código de producción necesario para que el test pase. Nada más.
 3. **Refactor**: limpia el código y los tests manteniendo todo en verde.
 4. Ejecuta la **suite completa** y comprueba que todo pasa.
-5. Marca la tarea en el plan (`- [ ]` → `- [x]`) **inmediatamente**, antes de empezar la siguiente.
+5. Marca la tarea en el plan (`- [ ]` → `- [x]`) **inmediatamente**, antes de empezar la siguiente, actualizando el comentario de la issue con `gh issue comment <numero> --edit-last --body-file <fichero-temporal>`.
 
 Notas:
 
